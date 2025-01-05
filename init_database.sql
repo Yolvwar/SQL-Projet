@@ -1,8 +1,7 @@
 /* DB Diagram link : https://dbdiagram.io/d/SQL-PROJECT-67351f26e9daa85aca5eeac1 */
 
 CREATE TABLE "moyens_de_transport" (
-  "id" integer PRIMARY KEY,
-  "id_mdt" char(3),
+  "id_mdt" char(3) PRIMARY KEY,
   "line_name" varchar(32),
   "max_capacity" integer,
   "travel_time" integer
@@ -10,7 +9,7 @@ CREATE TABLE "moyens_de_transport" (
 
 CREATE TABLE "ligne" (
   "id" integer PRIMARY KEY,
-  "line_name" varchar(32),
+  "code" varchar(3),
   "moyen_de_transport_id" integer
 );
 
@@ -48,12 +47,12 @@ CREATE TABLE "Ligne_Station" (
 
 CREATE TABLE "utilisateur" (
   "id" integer PRIMARY KEY,
-  "name" varchar(32),
+  "lastname" varchar(32),
   "firstname" varchar(32),
   "email" varchar(128),
   "phone_number" char(10),
-  "adresses" varchar(128),
-  "postal_code" char(5),
+  "address" varchar(128),
+  "zipcode" char(5),
   "commune_id" integer
 );
 
@@ -120,9 +119,9 @@ CREATE TABLE "facture" (
   "total_price" float NOT NULL
 );
 
-ALTER TABLE "moyens_de_transport" ADD FOREIGN KEY ("id") REFERENCES "ligne" ("moyen_de_transport_id");
+ALTER TABLE "moyens_de_transport" ADD FOREIGN KEY ("id_mdt") REFERENCES "ligne" ("moyen_de_transport_id");
 
-ALTER TABLE "moyens_de_transport" ADD FOREIGN KEY ("id") REFERENCES "station" ("moyen_de_transport_id");
+ALTER TABLE "moyens_de_transport" ADD FOREIGN KEY ("id_mdt") REFERENCES "station" ("moyen_de_transport_id");
 
 ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "station" ("zone_id");
 

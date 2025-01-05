@@ -93,8 +93,7 @@ CREATE TABLE "trajet" (
 );
 
 CREATE TABLE "forfait" (
-  "id" integer PRIMARY KEY,
-  "code" char(5),
+  "code" char(5) PRIMARY KEY,
   "name" varchar(32),
   "price_per_month" float NOT NULL,
   "duration_month" integer NOT NULL,
@@ -104,11 +103,11 @@ CREATE TABLE "forfait" (
 
 CREATE TABLE "abonnement" (
   "id" integer PRIMARY KEY,
-  "starting_date" timestamp NOT NULL,
+  "date_sub" timestamp NOT NULL,
   "iban" varchar(34) NOT NULL,
   "adress_proof" boolean NOT NULL,
   "utilisateurs_id" integer NOT NULL,
-  "forfait_id" integer NOT NULL,
+  "forfait_code" char(5) NOT NULL,
   "statut" enum(Registered,Pending,Incomplete) NOT NULL
 );
 
@@ -157,6 +156,6 @@ ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "forfait" ("min_zo
 
 ALTER TABLE "utilisateur" ADD FOREIGN KEY ("id") REFERENCES "abonnement" ("utilisateurs_id");
 
-ALTER TABLE "forfait" ADD FOREIGN KEY ("id") REFERENCES "abonnement" ("forfait_id");
+ALTER TABLE "forfait" ADD FOREIGN KEY ("code") REFERENCES "abonnement" ("forfait_code");
 
 ALTER TABLE "utilisateur" ADD FOREIGN KEY ("id") REFERENCES "facture" ("utilisateur_id");

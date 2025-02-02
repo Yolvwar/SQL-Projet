@@ -1,31 +1,31 @@
 /* DB Diagram link : https://dbdiagram.io/d/SQL-PROJECT-67351f26e9daa85aca5eeac1 */
 
-CREATE TABLE "moyens_de_transport" (
+CREATE TABLE "transportation_means" (
   "id_mdt" char(3) PRIMARY KEY,
   "line_name" varchar(32),
   "max_capacity" integer,
   "travel_time" integer
 );
 
-CREATE TABLE "ligne" (
+CREATE TABLE "line" (
   "id" integer PRIMARY KEY,
   "code" varchar(3),
-  "moyen_de_transport_id" integer
+  "transportation_mode_id" integer
 );
 
 CREATE TABLE "station" (
   "id" integer PRIMARY KEY,
   "id_station" integer,
   "station_name" varchar(64),
-  "station_commune" varchar(64),
-  "moyen_de_transport_id" integer,
+  "station_municipality" varchar(64),
+  "transportation_mode_id" integer,
   "zone_id" integer,
-  "commune_id" integer
+  "municipality_id" integer
 );
 
-CREATE TABLE "commune" (
+CREATE TABLE "municipality" (
   "id" integer PRIMARY KEY,
-  "commune_name" varchar(64)
+  "municipality_name" varchar(64)
 );
 
 CREATE TABLE "zone" (
@@ -34,18 +34,18 @@ CREATE TABLE "zone" (
   "zone_price" decimal
 );
 
-CREATE TABLE "Ligne_Zone" (
-  "ligne_id" int,
+CREATE TABLE "line_Zone" (
+  "line_id" int,
   "zone_id" int
 );
 
-CREATE TABLE "Ligne_Station" (
-  "ligne_id" int,
+CREATE TABLE "line_Station" (
+  "line_id" int,
   "station_id" int,
   "position" int
 );
 
-CREATE TABLE "utilisateur" (
+CREATE TABLE "user" (
   "id" integer PRIMARY KEY,
   "lastname" varchar(32),
   "firstname" varchar(32),
@@ -53,21 +53,21 @@ CREATE TABLE "utilisateur" (
   "phone_number" char(10),
   "address" varchar(128),
   "zipcode" char(5),
-  "commune_id" integer
+  "municipality_id" integer
 );
 
-CREATE TABLE "employé" (
+CREATE TABLE "employee" (
   "id" integer PRIMARY KEY,
   "login" varchar(20),
-  "utilisateur_id" integer
+  "user_id" integer
 );
 
-CREATE TABLE "contrat" (
+CREATE TABLE "contract" (
   "id" integer PRIMARY KEY,
-  "employed_at" timestamp,
+  "employeed_at" timestamp,
   "leaved_at" timestamp,
   "service_id" integer,
-  "employe_id" integer
+  "employee_id" integer
 );
 
 CREATE TABLE "service" (
@@ -76,23 +76,23 @@ CREATE TABLE "service" (
   "reduction_percentage" integer
 );
 
-CREATE TABLE "service_droit" (
+CREATE TABLE "service_rights" (
   "id" integer PRIMARY KEY,
   "service_reduc" integer,
   "description" text,
   "service_id" integer
 );
 
-CREATE TABLE "trajet" (
+CREATE TABLE "journey" (
   "id" integer PRIMARY KEY,
-  "utilisateur_id" integer,
+  "user_id" integer,
   "entry_time" timestamp,
   "entry_station_id" integer,
   "exit_time" timestamp,
   "exit_station_id" integer
 );
 
-CREATE TABLE "forfait" (
+CREATE TABLE "package" (
   "code" char(5) PRIMARY KEY,
   "name" varchar(32),
   "price_per_month" float NOT NULL,
@@ -101,61 +101,61 @@ CREATE TABLE "forfait" (
   "max_zone" integer
 );
 
-CREATE TABLE "abonnement" (
+CREATE TABLE "subscription" (
   "id" integer PRIMARY KEY,
   "date_sub" timestamp NOT NULL,
   "iban" varchar(34) NOT NULL,
   "adress_proof" boolean NOT NULL,
-  "utilisateurs_id" integer NOT NULL,
-  "forfait_code" char(5) NOT NULL,
-  "statut" enum(Registered,Pending,Incomplete) NOT NULL
+  "users_id" integer NOT NULL,
+  "package_code" char(5) NOT NULL,
+  "status" enum(Registered,Pending,Incomplete) NOT NULL
 );
 
-CREATE TABLE "facture" (
+CREATE TABLE "bill" (
   "id" integer PRIMARY KEY,
-  "utilisateur_id" integer NOT NULL,
-  "abonnement_id" integer,
+  "user_id" integer NOT NULL,
+  "subscription_id" integer,
   "total_price" float NOT NULL
 );
 
-ALTER TABLE "moyens_de_transport" ADD FOREIGN KEY ("id_mdt") REFERENCES "ligne" ("moyen_de_transport_id");
+ALTER TABLE "transportation_means" ADD FOREIGN KEY ("id_mdt") REFERENCES "line" ("transportation_mode_id");
 
-ALTER TABLE "moyens_de_transport" ADD FOREIGN KEY ("id_mdt") REFERENCES "station" ("moyen_de_transport_id");
+ALTER TABLE "transportation_means" ADD FOREIGN KEY ("id_mdt") REFERENCES "station" ("transportation_mode_id");
 
 ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "station" ("zone_id");
 
-ALTER TABLE "commune" ADD FOREIGN KEY ("id") REFERENCES "station" ("commune_id");
+ALTER TABLE "municipality" ADD FOREIGN KEY ("id") REFERENCES "station" ("municipality_id");
 
-ALTER TABLE "ligne" ADD FOREIGN KEY ("id") REFERENCES "Ligne_Zone" ("ligne_id");
+ALTER TABLE "line" ADD FOREIGN KEY ("id") REFERENCES "line_Zone" ("line_id");
 
-ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "Ligne_Zone" ("zone_id");
+ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "line_Zone" ("zone_id");
 
-ALTER TABLE "ligne" ADD FOREIGN KEY ("id") REFERENCES "Ligne_Station" ("ligne_id");
+ALTER TABLE "line" ADD FOREIGN KEY ("id") REFERENCES "line_Station" ("line_id");
 
-ALTER TABLE "station" ADD FOREIGN KEY ("id") REFERENCES "Ligne_Station" ("station_id");
+ALTER TABLE "station" ADD FOREIGN KEY ("id") REFERENCES "line_Station" ("station_id");
 
-ALTER TABLE "commune" ADD FOREIGN KEY ("id") REFERENCES "utilisateur" ("commune_id");
+ALTER TABLE "municipality" ADD FOREIGN KEY ("id") REFERENCES "user" ("municipality_id");
 
-ALTER TABLE "utilisateur" ADD FOREIGN KEY ("id") REFERENCES "employé" ("utilisateur_id");
+ALTER TABLE "user" ADD FOREIGN KEY ("id") REFERENCES "employee" ("user_id");
 
-ALTER TABLE "service" ADD FOREIGN KEY ("id") REFERENCES "contrat" ("service_id");
+ALTER TABLE "service" ADD FOREIGN KEY ("id") REFERENCES "contract" ("service_id");
 
-ALTER TABLE "employé" ADD FOREIGN KEY ("id") REFERENCES "contrat" ("employe_id");
+ALTER TABLE "employee" ADD FOREIGN KEY ("id") REFERENCES "contract" ("employee_id");
 
-ALTER TABLE "service" ADD FOREIGN KEY ("id") REFERENCES "service_droit" ("service_id");
+ALTER TABLE "service" ADD FOREIGN KEY ("id") REFERENCES "service_rights" ("service_id");
 
-ALTER TABLE "station" ADD FOREIGN KEY ("id") REFERENCES "trajet" ("entry_station_id");
+ALTER TABLE "station" ADD FOREIGN KEY ("id") REFERENCES "journey" ("entry_station_id");
 
-ALTER TABLE "station" ADD FOREIGN KEY ("id") REFERENCES "trajet" ("exit_station_id");
+ALTER TABLE "station" ADD FOREIGN KEY ("id") REFERENCES "journey" ("exit_station_id");
 
-ALTER TABLE "utilisateur" ADD FOREIGN KEY ("id") REFERENCES "trajet" ("utilisateur_id");
+ALTER TABLE "user" ADD FOREIGN KEY ("id") REFERENCES "journey" ("user_id");
 
-ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "forfait" ("max_zone");
+ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "package" ("max_zone");
 
-ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "forfait" ("min_zone");
+ALTER TABLE "zone" ADD FOREIGN KEY ("zone_number") REFERENCES "package" ("min_zone");
 
-ALTER TABLE "utilisateur" ADD FOREIGN KEY ("id") REFERENCES "abonnement" ("utilisateurs_id");
+ALTER TABLE "user" ADD FOREIGN KEY ("id") REFERENCES "subscription" ("users_id");
 
-ALTER TABLE "forfait" ADD FOREIGN KEY ("code") REFERENCES "abonnement" ("forfait_code");
+ALTER TABLE "package" ADD FOREIGN KEY ("code") REFERENCES "subscription" ("package_code");
 
-ALTER TABLE "utilisateur" ADD FOREIGN KEY ("id") REFERENCES "facture" ("utilisateur_id");
+ALTER TABLE "user" ADD FOREIGN KEY ("id") REFERENCES "bill" ("user_id");
